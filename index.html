@@ -1,0 +1,3055 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>长春高新 (000661) 超级分析平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#0a0e17',
+                            800: '#111827',
+                            700: '#1f2937',
+                            600: '#374151',
+                        },
+                        accent: {
+                            blue: '#3b82f6',
+                            cyan: '#06b6d4',
+                            purple: '#8b5cf6',
+                            green: '#10b981',
+                            red: '#ef4444',
+                            gold: '#f59e0b',
+                            pink: '#ec4899'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+
+        * {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #0a0e17;
+            color: #f9fafb;
+        }
+
+        /* 粒子背景 */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* 玻璃拟态卡片 */
+        .glass-card {
+            background: rgba(31, 41, 55, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-card-sm {
+            background: rgba(31, 41, 55, 0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+        }
+
+        /* 霓虹发光效果 */
+        .neon-blue {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5),
+                        0 0 40px rgba(59, 130, 246, 0.3),
+                        0 0 60px rgba(59, 130, 246, 0.1);
+        }
+
+        .neon-cyan {
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.5),
+                        0 0 40px rgba(6, 182, 212, 0.3);
+        }
+
+        .neon-purple {
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5),
+                        0 0 40px rgba(139, 92, 246, 0.3);
+        }
+
+        .neon-text {
+            text-shadow: 0 0 10px currentColor,
+                         0 0 20px currentColor,
+                         0 0 40px currentColor;
+        }
+
+        /* 渐变边框 */
+        .gradient-border {
+            position: relative;
+            background: linear-gradient(135deg, #0a0e17, #1f2937);
+            border-radius: 24px;
+        }
+
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4);
+            border-radius: 26px;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        /* 导航样式 */
+        .nav-item {
+            position: relative;
+            padding: 0.75rem 1.5rem;
+            color: #9ca3af;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: #f9fafb;
+        }
+
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #3b82f6, #06b6d4);
+            transition: width 0.3s ease;
+        }
+
+        .nav-item:hover::after, .nav-item.active::after {
+            width: 80%;
+        }
+
+        /* 标签切换 */
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            color: #9ca3af;
+            font-size: 0.875rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .tab-btn:hover {
+            color: #f9fafb;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .tab-btn.active {
+            color: #f9fafb;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.3));
+            border: 1px solid rgba(59, 130, 246, 0.5);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 数字动画 */
+        .stat-number {
+            font-feature-settings: 'tnum';
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* 悬浮卡片效果 */
+        .hover-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .hover-card:hover {
+            transform: translateY(-8px) scale(1.02);
+        }
+
+        /* 进度条动画 */
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease-out;
+        }
+
+        /* 脉冲动画 */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        /* 渐变文字 */
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #111827;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+
+        /* 模块隐藏/显示 */
+        .module-section {
+            display: none;
+        }
+
+        .module-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* 数据表格 */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .data-table th {
+            background: rgba(59, 130, 246, 0.2);
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #f9fafb;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .data-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #d1d5db;
+        }
+
+        .data-table tr:hover td {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        /* 时间线 */
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+            padding-bottom: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 24px;
+            width: 2px;
+            height: calc(100% - 20px);
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.5), transparent);
+        }
+
+        .timeline-item:last-child::after {
+            display: none;
+        }
+
+        /* 图表容器 */
+        .chart-container {
+            position: relative;
+            min-height: 300px;
+        }
+
+        /* 移动端菜单 */
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .mobile-menu.open {
+            max-height: 500px;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- 顶部导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-card-sm border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-blue to-accent-purple flex items-center justify-center neon-blue">
+                        <i class="fas fa-chart-line text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-white text-lg">长春高新</h1>
+                        <p class="text-xs text-gray-400">000661.SZ</p>
+                    </div>
+                </div>
+
+                <!-- 主导航 - 桌面端 -->
+                <div class="hidden lg:flex items-center space-x-1">
+                    <div class="nav-item active" data-module="overview">概览</div>
+                    <div class="nav-item" data-module="financial">深度财务</div>
+                    <div class="nav-item" data-module="industry">行业研究</div>
+                    <div class="nav-item" data-module="competition">竞争分析</div>
+                    <div class="nav-item" data-module="company">公司深研</div>
+                    <div class="nav-item" data-module="valuation">投资估值</div>
+                    <div class="nav-item" data-module="appendix">附录</div>
+                </div>
+
+                <!-- 移动端菜单按钮 -->
+                <button id="mobileMenuBtn" class="lg:hidden p-2 text-gray-400 hover:text-white">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+
+            <!-- 移动端菜单 -->
+            <div id="mobileMenu" class="mobile-menu lg:hidden">
+                <div class="py-4 space-y-2 border-t border-white/5">
+                    <div class="nav-item active block" data-module="overview">概览</div>
+                    <div class="nav-item block" data-module="financial">深度财务</div>
+                    <div class="nav-item block" data-module="industry">行业研究</div>
+                    <div class="nav-item block" data-module="competition">竞争分析</div>
+                    <div class="nav-item block" data-module="company">公司深研</div>
+                    <div class="nav-item block" data-module="valuation">投资估值</div>
+                    <div class="nav-item block" data-module="appendix">附录</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==================== 模块一：概览 ==================== -->
+    <section id="overview" class="module-section active pt-20">
+        <!-- Hero区域 + 粒子背景 -->
+        <div class="relative min-h-[600px] overflow-hidden">
+            <div id="particles-js"></div>
+            <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <!-- 公司标题 -->
+                <div class="text-center mb-12">
+                    <div class="inline-flex items-center px-4 py-2 rounded-full glass-card-sm mb-6">
+                        <span class="w-2 h-2 bg-green-500 rounded-full mr-2 pulse-glow"></span>
+                        <span class="text-sm text-gray-300">实时数据 · 深度分析</span>
+                    </div>
+                    <h1 class="text-4xl md:text-6xl font-black mb-4">
+                        <span class="gradient-text">长春高新技术产业集团</span>
+                    </h1>
+                    <p class="text-xl md:text-2xl text-gray-400 mb-2">中国生长激素行业绝对龙头</p>
+                    <div class="flex items-center justify-center space-x-4 text-sm text-gray-500">
+                        <span><i class="fas fa-building mr-1"></i>深圳证券交易所</span>
+                        <span>|</span>
+                        <span><i class="fas fa-tag mr-1"></i>000661.SZ</span>
+                        <span>|</span>
+                        <span><i class="fas fa-industry mr-1"></i>生物医药</span>
+                    </div>
+                </div>
+
+                <!-- 核心指标卡片 -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                    <div class="glass-card p-6 hover-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-blue/20 to-accent-cyan/20 flex items-center justify-center">
+                                <i class="fas fa-coins text-accent-cyan text-xl"></i>
+                            </div>
+                            <span class="text-xs text-gray-500">2024</span>
+                        </div>
+                        <div class="text-3xl md:text-4xl font-black text-white stat-number" data-value="134.66">0</div>
+                        <div class="text-sm text-gray-400 mt-1">营业收入(亿元)</div>
+                        <div class="flex items-center mt-2 text-xs">
+                            <span class="text-accent-red"><i class="fas fa-arrow-down mr-1"></i>-7.55%</span>
+                            <span class="text-gray-500 ml-2">同比</span>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6 hover-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-green/20 to-accent-cyan/20 flex items-center justify-center">
+                                <i class="fas fa-chart-line text-accent-green text-xl"></i>
+                            </div>
+                            <span class="text-xs text-gray-500">2024</span>
+                        </div>
+                        <div class="text-3xl md:text-4xl font-black text-white stat-number" data-value="27.08">0</div>
+                        <div class="text-sm text-gray-400 mt-1">归母净利润(亿元)</div>
+                        <div class="flex items-center mt-2 text-xs">
+                            <span class="text-accent-red"><i class="fas fa-arrow-down mr-1"></i>-43.01%</span>
+                            <span class="text-gray-500 ml-2">同比</span>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6 hover-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-purple/20 to-accent-pink/20 flex items-center justify-center">
+                                <i class="fas fa-crown text-accent-purple text-xl"></i>
+                            </div>
+                            <span class="text-xs text-accent-gold"><i class="fas fa-trophy"></i> 第一</span>
+                        </div>
+                        <div class="text-3xl md:text-4xl font-black text-white stat-number" data-value="87" data-suffix="%">0</div>
+                        <div class="text-sm text-gray-400 mt-1">生长激素市占率</div>
+                        <div class="flex items-center mt-2 text-xs">
+                            <span class="text-accent-green"><i class="fas fa-shield-alt mr-1"></i>绝对龙头</span>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6 hover-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-gold/20 to-accent-red/20 flex items-center justify-center">
+                                <i class="fas fa-flask text-accent-gold text-xl"></i>
+                            </div>
+                            <span class="text-xs text-gray-500">2024</span>
+                        </div>
+                        <div class="text-3xl md:text-4xl font-black text-white stat-number" data-value="26.90">0</div>
+                        <div class="text-sm text-gray-400 mt-1">研发投入(亿元)</div>
+                        <div class="flex items-center mt-2 text-xs">
+                            <span class="text-accent-green"><i class="fas fa-arrow-up mr-1"></i>+11.20%</span>
+                            <span class="text-gray-500 ml-2">占比19.97%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 渐变分隔 -->
+            <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-dark-900 to-transparent"></div>
+        </div>
+
+        <!-- 概览子标签 -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-wrap gap-2 mb-8">
+                <button class="tab-btn active" data-tab="overview-snapshot">公司快照</button>
+                <button class="tab-btn" data-tab="overview-swot">SWOT分析</button>
+                <button class="tab-btn" data-tab="overview-pestel">PESTEL分析</button>
+                <button class="tab-btn" data-tab="overview-porter">波特五力</button>
+                <button class="tab-btn" data-tab="overview-canvas">商业画布</button>
+            </div>
+
+            <!-- 公司快照 -->
+            <div id="overview-snapshot" class="tab-content active">
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <!-- 公司简介 -->
+                    <div class="lg:col-span-2 glass-card p-6">
+                        <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-building text-accent-blue mr-3"></i>公司概况
+                        </h3>
+                        <p class="text-gray-300 leading-relaxed mb-4">
+                            长春高新技术产业（集团）股份有限公司成立于1993年，是一家以<strong class="text-accent-cyan">生物医药</strong>为核心的高新技术企业。
+                            公司旗下核心子公司<strong class="text-accent-blue">金赛药业</strong>是中国生长激素市场的绝对龙头，
+                            产品覆盖粉针、水针、长效制剂全系列，拥有15万例临床验证数据。
+                        </p>
+                        <p class="text-gray-300 leading-relaxed">
+                            近年来，公司积极推进<strong class="text-accent-purple">"三驾马车"</strong>战略转型：生长激素+创新药管线+海外市场。
+                            2024年海外收入同比增长<span class="text-accent-green font-bold">454%</span>，国际化战略加速推进。
+                        </p>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                            <div class="glass-card-sm p-4 text-center">
+                                <i class="fas fa-flask text-accent-blue text-2xl mb-2"></i>
+                                <div class="text-2xl font-bold text-white">24款</div>
+                                <div class="text-xs text-gray-400">临床阶段产品</div>
+                            </div>
+                            <div class="glass-card-sm p-4 text-center">
+                                <i class="fas fa-users text-accent-green text-2xl mb-2"></i>
+                                <div class="text-2xl font-bold text-white">15万例</div>
+                                <div class="text-xs text-gray-400">临床验证数据</div>
+                            </div>
+                            <div class="glass-card-sm p-4 text-center">
+                                <i class="fas fa-globe text-accent-purple text-2xl mb-2"></i>
+                                <div class="text-2xl font-bold text-white">454%</div>
+                                <div class="text-xs text-gray-400">海外收入增长</div>
+                            </div>
+                            <div class="glass-card-sm p-4 text-center">
+                                <i class="fas fa-percentage text-accent-gold text-2xl mb-2"></i>
+                                <div class="text-2xl font-bold text-white">19.97%</div>
+                                <div class="text-xs text-gray-400">研发投入占比</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 股价信息 -->
+                    <div class="glass-card p-6">
+                        <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-chart-area text-accent-green mr-3"></i>市场表现
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center p-3 glass-card-sm rounded-lg">
+                                <span class="text-gray-400">最新价</span>
+                                <span class="text-2xl font-bold text-white">¥168.50</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 glass-card-sm rounded-lg">
+                                <span class="text-gray-400">市值</span>
+                                <span class="text-lg font-bold text-white">682亿</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 glass-card-sm rounded-lg">
+                                <span class="text-gray-400">PE(TTM)</span>
+                                <span class="text-lg font-bold text-accent-blue">~25x</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 glass-card-sm rounded-lg">
+                                <span class="text-gray-400">PB</span>
+                                <span class="text-lg font-bold text-accent-purple">~3.2x</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 glass-card-sm rounded-lg">
+                                <span class="text-gray-400">52周区间</span>
+                                <span class="text-sm font-bold text-gray-300">¥98 - ¥210</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SWOT分析 -->
+            <div id="overview-swot" class="tab-content">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- 优势 -->
+                    <div class="glass-card p-6 border-l-4 border-accent-green hover-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-accent-green/20 rounded-xl flex items-center justify-center mr-4">
+                                <i class="fas fa-arrow-up text-accent-green text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-accent-green">优势 Strengths</h3>
+                        </div>
+                        <ul class="space-y-3">
+                            <li class="flex items-start text-gray-300">
+                                <i class="fas fa-check-circle text-accent-green mt-1 mr-3"></i>
+                                <span><strong class="text-white">绝对市场领导地位</strong> - 生长激素市场份额达87%，行业第一</span>
+                            </li>
+                            <li class="flex items-start text-gray-300">
+                                <i class="fas fa-check-circle text-accent-green mt-1 mr-3"></i>
+                                <span><strong class="text-white">长效技术壁垒</strong> - 15万例临床验证，不良反应率<0.01%</span>
+                            </li>
+                            <li class="flex items-start text-gray-300">
+                                <i class="fas fa-check-circle text-accent-green mt-1 mr-3"></i>
+                                <span><strong class="text-white">金赛药业品牌优势</strong> - 行业认知度最高的专业品牌</span>
+                            </li>
+                            <li class="flex items-start text-gray-300">
+                                <i class="fas fa-check-circle text-accent-green mt-1 mr-3"></i>
+                                <span><strong class="text-white">完整产品线</strong> - 粉针、水针、长效全系列覆盖</span>
+                            </li>
+                            <li class="flex items-start text-gray-300">
+                                <i class="fas fa-check-circle text-accent-green mt-1 mr-3"></i>
+                                <span><strong class="text-white">强大销售网络</strong> - 覆盖全国主要医院与专科门诊</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 劣势 -->
+                    <div class="glass-card p-6 border-l-4 border-accent-red hover-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-accent-red/20 rounded-xl flex items-center justify-center mr-4">
+                                <i class="fas fa-arrow-down text-accent-red text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-accent-red">劣势 Weaknesses</h3>
+                        </div>
+                        <ul class="space-y-3">
+                            <li class="flex items-start text-gray-300">
+                                <i class="fas fa-exclamation-circle text-accent-red mt-1 mr-3"></i>
+                                <span><strong class="text-white">产品过度集中</strong> - 生长激素占总营收79%，单一依赖风险高</span>
+                            </li>
+                            <li class="flex items-start text-gray-300">
+                                <i class="fas fa-exclamation-circle text-accent-red mt-1 mr-3"></i>
+                                <span><strong class="text-white">业绩下滑压力</strong> - 2024年营收降7.55%，净利降43.01%</span>
+                            </li>
+                            <li class="flex items-start text-gray-300">
+                                <i class="fas fa-exclamation-circle text-accent-red mt-1 mr-3"></i>
+                                <span><strong class="text-white">创新药尚未商业化</strong> - 24款临床产品仍在研发阶段</span>
+                            </li>
+                            <li class="flex items-start text-gray-300">
+                                <i class="fas fa-exclamation-circle text-accent-red mt-1 mr-3"></i>
+                                <span><strong class="text-white">高销售费用</strong> - 销售费用率偏高，影响盈利能力</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 机会 -->
+                    <div class="glass-card p-6 border-l-4 border-accent-blue hover-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-accent-blue/20 rounded-xl flex items-center justify-center mr-4">
+                                <i class="fas fa-lightbulb text-accent-blue text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-accent-blue">机会 Opportunities</h3>
+                        </div>
+                        <ul class="space-y-3">
+                            <li class="flex items-start text-gray-300">
+                                <i class="fas fa-star text-accent-blue mt-1 mr-3"></i>
+                                <span><strong class="text-white">低渗透率市场</strong> - 目前仅5%，潜在空间达700万患儿</span>
+                            </li>
+                            <li class="flex items-start text-gray-300">
+                                <i class="fas fa-star text-accent-blue mt-1 mr-3"></i>
+                                <span><strong class="text-white">海外市场拓展</strong> - 2024年海外收入增长454%，国际化加速</span>
+                            </li>
+                            <li class="flex items-start text-gray-300">
+                                <i class="fas fa-star text-accent-blue mt-1 mr-3"></i>
+                                <span><strong class="text-white">多元化布局</strong> - 儿科、女性健康、抗衰老新领域</span>
+                            </li>
+                            <li class="flex items-start text-gray-300">
+                                <i class="fas fa-star text-accent-blue mt-1 mr-3"></i>
+                                <span><strong class="text-white">市场规模增长</strong> - 预计2030年达337.5亿元</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 威胁 -->
+                    <div class="glass-card p-6 border-l-4 border-accent-gold hover-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-accent-gold/20 rounded-xl flex items-center justify-center mr-4">
+                                <i class="fas fa-bolt text-accent-gold text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-accent-gold">威胁 Threats</h3>
+                        </div>
+                        <ul class="space-y-3">
+                            <li class="flex items-start text-gray-300">
+                                <i class="fas fa-exclamation-triangle text-accent-gold mt-1 mr-3"></i>
+                                <span><strong class="text-white">集采政策压力</strong> - 预计全国集采降价超50%</span>
+                            </li>
+                            <li class="flex items-start text-gray-300">
+                                <i class="fas fa-exclamation-triangle text-accent-gold mt-1 mr-3"></i>
+                                <span><strong class="text-white">竞争加剧</strong> - 安科生物、维昇药业等竞品追赶</span>
+                            </li>
+                            <li class="flex items-start text-gray-300">
+                                <i class="fas fa-exclamation-triangle text-accent-gold mt-1 mr-3"></i>
+                                <span><strong class="text-white">长效竞品获批</strong> - 特宝生物、诺和诺德即将上市</span>
+                            </li>
+                            <li class="flex items-start text-gray-300">
+                                <i class="fas fa-exclamation-triangle text-accent-gold mt-1 mr-3"></i>
+                                <span><strong class="text-white">监管趋严</strong> - 适应症审批与临床标准提高</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PESTEL分析 -->
+            <div id="overview-pestel" class="tab-content">
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Political -->
+                    <div class="glass-card p-6 hover-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-red-500/20 to-red-600/20 flex items-center justify-center mr-4">
+                                <i class="fas fa-landmark text-red-400 text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-white">政治因素</h3>
+                                <span class="text-xs text-red-400">Political</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li class="flex items-center"><span class="w-2 h-2 bg-red-400 rounded-full mr-2"></span>集采政策持续推进，价格压力增大</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-red-400 rounded-full mr-2"></span>医保改革深化，支付方式变革</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-red-400 rounded-full mr-2"></span>药品审批制度改革，加速创新药上市</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-red-400 rounded-full mr-2"></span>"健康中国2030"战略政策支持</li>
+                        </ul>
+                        <div class="mt-4 pt-4 border-t border-white/10">
+                            <div class="flex justify-between text-xs mb-2">
+                                <span class="text-gray-400">影响程度</span>
+                                <span class="font-bold text-red-400">高 85%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-gradient-to-r from-red-500 to-red-400" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Economic -->
+                    <div class="glass-card p-6 hover-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500/20 to-green-600/20 flex items-center justify-center mr-4">
+                                <i class="fas fa-chart-pie text-green-400 text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-white">经济因素</h3>
+                                <span class="text-xs text-green-400">Economic</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li class="flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>医疗卫生支出持续增长</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>中产阶级规模扩大，消费升级</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>居民可支配收入提升</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>医疗保险覆盖率提高</li>
+                        </ul>
+                        <div class="mt-4 pt-4 border-t border-white/10">
+                            <div class="flex justify-between text-xs mb-2">
+                                <span class="text-gray-400">影响程度</span>
+                                <span class="font-bold text-green-400">中高 70%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-gradient-to-r from-green-500 to-green-400" style="width: 70%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social -->
+                    <div class="glass-card p-6 hover-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center mr-4">
+                                <i class="fas fa-users text-blue-400 text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-white">社会因素</h3>
+                                <span class="text-xs text-blue-400">Social</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li class="flex items-center"><span class="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>"身高焦虑"社会意识增强</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>家长对儿童健康投入增加</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>生育政策变化影响患儿基数</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>健康教育普及度提升</li>
+                        </ul>
+                        <div class="mt-4 pt-4 border-t border-white/10">
+                            <div class="flex justify-between text-xs mb-2">
+                                <span class="text-gray-400">影响程度</span>
+                                <span class="font-bold text-blue-400">中 60%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-gradient-to-r from-blue-500 to-blue-400" style="width: 60%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Technological -->
+                    <div class="glass-card p-6 hover-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/20 flex items-center justify-center mr-4">
+                                <i class="fas fa-microchip text-purple-400 text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-white">技术因素</h3>
+                                <span class="text-xs text-purple-400">Technological</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li class="flex items-center"><span class="w-2 h-2 bg-purple-400 rounded-full mr-2"></span>长效制剂技术持续创新</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-purple-400 rounded-full mr-2"></span>生物类似药研发加速</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-purple-400 rounded-full mr-2"></span>基因检测与精准医疗发展</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-purple-400 rounded-full mr-2"></span>数字化医疗与患者管理</li>
+                        </ul>
+                        <div class="mt-4 pt-4 border-t border-white/10">
+                            <div class="flex justify-between text-xs mb-2">
+                                <span class="text-gray-400">影响程度</span>
+                                <span class="font-bold text-purple-400">高 80%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-gradient-to-r from-purple-500 to-purple-400" style="width: 80%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Environmental -->
+                    <div class="glass-card p-6 hover-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-teal-500/20 to-teal-600/20 flex items-center justify-center mr-4">
+                                <i class="fas fa-leaf text-teal-400 text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-white">环境因素</h3>
+                                <span class="text-xs text-teal-400">Environmental</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li class="flex items-center"><span class="w-2 h-2 bg-teal-400 rounded-full mr-2"></span>制药行业环保要求提高</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-teal-400 rounded-full mr-2"></span>绿色生产与可持续发展</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-teal-400 rounded-full mr-2"></span>ESG投资趋势影响估值</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-teal-400 rounded-full mr-2"></span>碳中和目标下的转型压力</li>
+                        </ul>
+                        <div class="mt-4 pt-4 border-t border-white/10">
+                            <div class="flex justify-between text-xs mb-2">
+                                <span class="text-gray-400">影响程度</span>
+                                <span class="font-bold text-teal-400">低 35%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-gradient-to-r from-teal-500 to-teal-400" style="width: 35%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Legal -->
+                    <div class="glass-card p-6 hover-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500/20 to-indigo-600/20 flex items-center justify-center mr-4">
+                                <i class="fas fa-gavel text-indigo-400 text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-white">法律因素</h3>
+                                <span class="text-xs text-indigo-400">Legal</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li class="flex items-center"><span class="w-2 h-2 bg-indigo-400 rounded-full mr-2"></span>药品专利保护期限</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-indigo-400 rounded-full mr-2"></span>适应症扩展审批流程</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-indigo-400 rounded-full mr-2"></span>临床试验规范要求</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-indigo-400 rounded-full mr-2"></span>反商业贿赂监管强化</li>
+                        </ul>
+                        <div class="mt-4 pt-4 border-t border-white/10">
+                            <div class="flex justify-between text-xs mb-2">
+                                <span class="text-gray-400">影响程度</span>
+                                <span class="font-bold text-indigo-400">中高 75%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-gradient-to-r from-indigo-500 to-indigo-400" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 波特五力 -->
+            <div id="overview-porter" class="tab-content">
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="glass-card p-6">
+                        <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                            <i class="fas fa-radar text-accent-blue mr-3"></i>五力竞争态势
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="porterChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="glass-card-sm p-5 border-l-4 border-yellow-500">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center">
+                                    <i class="fas fa-door-open text-yellow-400 mr-3"></i>
+                                    <h4 class="font-bold text-white">新进入者威胁</h4>
+                                </div>
+                                <span class="px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-bold">中等 55%</span>
+                            </div>
+                            <p class="text-sm text-gray-400">生物药研发技术壁垒高，临床周期长(5-8年)。但维昇药业、天境生物等新进入者正加速布局。</p>
+                        </div>
+
+                        <div class="glass-card-sm p-5 border-l-4 border-green-500">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center">
+                                    <i class="fas fa-industry text-green-400 mr-3"></i>
+                                    <h4 class="font-bold text-white">供应商议价能力</h4>
+                                </div>
+                                <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-bold">低 25%</span>
+                            </div>
+                            <p class="text-sm text-gray-400">原料药供应充足，供应商分散。金赛药业具备垂直整合能力，议价能力强。</p>
+                        </div>
+
+                        <div class="glass-card-sm p-5 border-l-4 border-red-500">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center">
+                                    <i class="fas fa-hospital text-red-400 mr-3"></i>
+                                    <h4 class="font-bold text-white">买方议价能力</h4>
+                                </div>
+                                <span class="px-3 py-1 bg-red-500/20 text-red-400 rounded-full text-xs font-bold">高 80%</span>
+                            </div>
+                            <p class="text-sm text-gray-400">集采政策赋予医院强大议价能力，广东联盟集采已导致粉针降价52%。</p>
+                        </div>
+
+                        <div class="glass-card-sm p-5 border-l-4 border-green-500">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center">
+                                    <i class="fas fa-exchange-alt text-green-400 mr-3"></i>
+                                    <h4 class="font-bold text-white">替代品威胁</h4>
+                                </div>
+                                <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-bold">低 20%</span>
+                            </div>
+                            <p class="text-sm text-gray-400">生长激素是矮小症标准疗法，目前缺乏有效替代治疗手段。</p>
+                        </div>
+
+                        <div class="glass-card-sm p-5 border-l-4 border-orange-500">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center">
+                                    <i class="fas fa-fist-raised text-orange-400 mr-3"></i>
+                                    <h4 class="font-bold text-white">行业竞争强度</h4>
+                                </div>
+                                <span class="px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-xs font-bold">中高 70%</span>
+                            </div>
+                            <p class="text-sm text-gray-400">双寡头格局(金赛87%+安科12%)正在松动，长效制剂市场竞争加剧。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 商业画布 -->
+            <div id="overview-canvas" class="tab-content">
+                <div class="glass-card overflow-hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-5 md:grid-rows-2">
+                        <!-- 关键合作 -->
+                        <div class="p-5 border-b md:border-r border-white/10 md:row-span-2">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-handshake text-accent-blue mr-2"></i>
+                                <h4 class="font-bold text-accent-blue text-sm">关键合作</h4>
+                            </div>
+                            <ul class="space-y-2 text-sm text-gray-300">
+                                <li class="flex items-start"><span class="w-1.5 h-1.5 bg-accent-blue rounded-full mt-2 mr-2"></span>三甲医院与儿科专科</li>
+                                <li class="flex items-start"><span class="w-1.5 h-1.5 bg-accent-blue rounded-full mt-2 mr-2"></span>KOL儿科专家</li>
+                                <li class="flex items-start"><span class="w-1.5 h-1.5 bg-accent-blue rounded-full mt-2 mr-2"></span>医药经销商网络</li>
+                                <li class="flex items-start"><span class="w-1.5 h-1.5 bg-accent-blue rounded-full mt-2 mr-2"></span>海外BD合作伙伴</li>
+                            </ul>
+                        </div>
+
+                        <!-- 关键活动 -->
+                        <div class="p-5 border-b md:border-r border-white/10">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-cogs text-accent-green mr-2"></i>
+                                <h4 class="font-bold text-accent-green text-sm">关键活动</h4>
+                            </div>
+                            <ul class="space-y-2 text-sm text-gray-300">
+                                <li class="flex items-start"><span class="w-1.5 h-1.5 bg-accent-green rounded-full mt-2 mr-2"></span>长效制剂研发</li>
+                                <li class="flex items-start"><span class="w-1.5 h-1.5 bg-accent-green rounded-full mt-2 mr-2"></span>临床试验推进</li>
+                                <li class="flex items-start"><span class="w-1.5 h-1.5 bg-accent-green rounded-full mt-2 mr-2"></span>学术推广营销</li>
+                            </ul>
+                        </div>
+
+                        <!-- 价值主张 -->
+                        <div class="p-5 border-b md:border-r border-white/10 md:row-span-2 bg-accent-blue/5">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-gem text-accent-purple mr-2"></i>
+                                <h4 class="font-bold text-accent-purple text-sm">价值主张</h4>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="glass-card-sm p-3 rounded-lg">
+                                    <strong class="text-white text-sm">长效安全</strong>
+                                    <p class="text-xs text-gray-400 mt-1">每周1次注射，依从性提升80%</p>
+                                </div>
+                                <div class="glass-card-sm p-3 rounded-lg">
+                                    <strong class="text-white text-sm">临床验证</strong>
+                                    <p class="text-xs text-gray-400 mt-1">15万例数据，不良反应<0.01%</p>
+                                </div>
+                                <div class="glass-card-sm p-3 rounded-lg">
+                                    <strong class="text-white text-sm">全系列覆盖</strong>
+                                    <p class="text-xs text-gray-400 mt-1">粉针、水针、长效多规格</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 客户关系 -->
+                        <div class="p-5 border-b md:border-r border-white/10">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-heart text-accent-red mr-2"></i>
+                                <h4 class="font-bold text-accent-red text-sm">客户关系</h4>
+                            </div>
+                            <ul class="space-y-2 text-sm text-gray-300">
+                                <li class="flex items-start"><span class="w-1.5 h-1.5 bg-accent-red rounded-full mt-2 mr-2"></span>医学代表服务</li>
+                                <li class="flex items-start"><span class="w-1.5 h-1.5 bg-accent-red rounded-full mt-2 mr-2"></span>患者依从性管理</li>
+                                <li class="flex items-start"><span class="w-1.5 h-1.5 bg-accent-red rounded-full mt-2 mr-2"></span>学术会议培训</li>
+                            </ul>
+                        </div>
+
+                        <!-- 客户细分 -->
+                        <div class="p-5 border-b border-white/10 md:row-span-2">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-users text-accent-cyan mr-2"></i>
+                                <h4 class="font-bold text-accent-cyan text-sm">客户细分</h4>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="glass-card-sm p-2 rounded-lg">
+                                    <strong class="text-white text-xs">矮小症儿童</strong>
+                                    <p class="text-xs text-gray-400">约700万潜在市场</p>
+                                </div>
+                                <div class="glass-card-sm p-2 rounded-lg">
+                                    <strong class="text-white text-xs">特发性矮小</strong>
+                                    <p class="text-xs text-gray-400">身高<P3健康儿童</p>
+                                </div>
+                                <div class="glass-card-sm p-2 rounded-lg">
+                                    <strong class="text-white text-xs">成人GHD</strong>
+                                    <p class="text-xs text-gray-400">成人缺乏症患者</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 核心资源 -->
+                        <div class="p-5 border-b md:border-r border-white/10">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-database text-accent-gold mr-2"></i>
+                                <h4 class="font-bold text-accent-gold text-sm">核心资源</h4>
+                            </div>
+                            <ul class="space-y-2 text-sm text-gray-300">
+                                <li class="flex items-start"><span class="w-1.5 h-1.5 bg-accent-gold rounded-full mt-2 mr-2"></span>长效技术专利群</li>
+                                <li class="flex items-start"><span class="w-1.5 h-1.5 bg-accent-gold rounded-full mt-2 mr-2"></span>临床数据库</li>
+                                <li class="flex items-start"><span class="w-1.5 h-1.5 bg-accent-gold rounded-full mt-2 mr-2"></span>金赛药业品牌</li>
+                            </ul>
+                        </div>
+
+                        <!-- 渠道通路 -->
+                        <div class="p-5 border-b md:border-r border-white/10">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-route text-accent-pink mr-2"></i>
+                                <h4 class="font-bold text-accent-pink text-sm">渠道通路</h4>
+                            </div>
+                            <ul class="space-y-2 text-sm text-gray-300">
+                                <li class="flex items-start"><span class="w-1.5 h-1.5 bg-accent-pink rounded-full mt-2 mr-2"></span>公立医院处方</li>
+                                <li class="flex items-start"><span class="w-1.5 h-1.5 bg-accent-pink rounded-full mt-2 mr-2"></span>儿童专科医院</li>
+                                <li class="flex items-start"><span class="w-1.5 h-1.5 bg-accent-pink rounded-full mt-2 mr-2"></span>DTP药房</li>
+                            </ul>
+                        </div>
+
+                        <!-- 成本结构 -->
+                        <div class="p-5 border-b md:border-r border-white/10 md:col-span-2">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-coins text-gray-400 mr-2"></i>
+                                <h4 class="font-bold text-gray-400 text-sm">成本结构</h4>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="glass-card-sm p-3 text-center rounded-lg">
+                                    <div class="text-xl font-bold text-accent-blue">19.97%</div>
+                                    <div class="text-xs text-gray-400">研发投入占比</div>
+                                </div>
+                                <div class="glass-card-sm p-3 text-center rounded-lg">
+                                    <div class="text-xl font-bold text-accent-red">~35%</div>
+                                    <div class="text-xs text-gray-400">销售费用率</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 收入来源 -->
+                        <div class="p-5 md:col-span-2">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-money-bill-wave text-accent-green mr-2"></i>
+                                <h4 class="font-bold text-accent-green text-sm">收入来源</h4>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3">
+                                <div class="glass-card-sm p-3 text-center rounded-lg">
+                                    <div class="text-xl font-bold text-accent-green">79%</div>
+                                    <div class="text-xs text-gray-400">生长激素</div>
+                                </div>
+                                <div class="glass-card-sm p-3 text-center rounded-lg">
+                                    <div class="text-xl font-bold text-accent-green">15%</div>
+                                    <div class="text-xs text-gray-400">疫苗业务</div>
+                                </div>
+                                <div class="glass-card-sm p-3 text-center rounded-lg">
+                                    <div class="text-xl font-bold text-accent-green">6%</div>
+                                    <div class="text-xs text-gray-400">其他业务</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 模块二：深度财务 ==================== -->
+    <section id="financial" class="module-section pt-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-black gradient-text mb-2">深度财务分析</h2>
+                <p class="text-gray-400">Financial Deep Dive</p>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-8">
+                <button class="tab-btn active" data-tab="fin-income">利润表分析</button>
+                <button class="tab-btn" data-tab="fin-balance">资产负债表</button>
+                <button class="tab-btn" data-tab="fin-cashflow">现金流分析</button>
+                <button class="tab-btn" data-tab="fin-ratios">财务比率</button>
+            </div>
+
+            <!-- 利润表分析 -->
+            <div id="fin-income" class="tab-content active">
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-chart-bar text-accent-blue mr-3"></i>营收与净利润趋势
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-layer-group text-accent-purple mr-3"></i>收入构成分析
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="revenueBreakdownChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-2 glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-table text-accent-cyan mr-3"></i>利润表关键数据 (单位：亿元)
+                        </h3>
+                        <div class="overflow-x-auto">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>指标</th>
+                                        <th>2020</th>
+                                        <th>2021</th>
+                                        <th>2022</th>
+                                        <th>2023</th>
+                                        <th>2024</th>
+                                        <th>同比变化</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="font-medium text-white">营业收入</td>
+                                        <td>85.77</td>
+                                        <td>107.47</td>
+                                        <td>126.27</td>
+                                        <td>145.66</td>
+                                        <td>134.66</td>
+                                        <td class="text-accent-red">-7.55%</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium text-white">归母净利润</td>
+                                        <td>30.47</td>
+                                        <td>39.23</td>
+                                        <td>42.15</td>
+                                        <td>47.76</td>
+                                        <td>27.08</td>
+                                        <td class="text-accent-red">-43.01%</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium text-white">研发费用</td>
+                                        <td>15.21</td>
+                                        <td>18.34</td>
+                                        <td>21.56</td>
+                                        <td>24.19</td>
+                                        <td>26.90</td>
+                                        <td class="text-accent-green">+11.20%</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium text-white">毛利率</td>
+                                        <td>86.5%</td>
+                                        <td>87.2%</td>
+                                        <td>85.8%</td>
+                                        <td>84.3%</td>
+                                        <td>20.10%</td>
+                                        <td class="text-accent-red">-64.2pp</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 资产负债表 -->
+            <div id="fin-balance" class="tab-content">
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-balance-scale text-accent-green mr-3"></i>资产结构
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="assetChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-building text-accent-purple mr-3"></i>资产负债率趋势
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="leverageChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-2">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="glass-card p-5 text-center">
+                                <i class="fas fa-coins text-accent-gold text-2xl mb-2"></i>
+                                <div class="text-2xl font-bold text-white">215.8亿</div>
+                                <div class="text-sm text-gray-400">总资产</div>
+                            </div>
+                            <div class="glass-card p-5 text-center">
+                                <i class="fas fa-hand-holding-usd text-accent-green text-2xl mb-2"></i>
+                                <div class="text-2xl font-bold text-white">140.2亿</div>
+                                <div class="text-sm text-gray-400">净资产</div>
+                            </div>
+                            <div class="glass-card p-5 text-center">
+                                <i class="fas fa-percentage text-accent-blue text-2xl mb-2"></i>
+                                <div class="text-2xl font-bold text-white">35.0%</div>
+                                <div class="text-sm text-gray-400">资产负债率</div>
+                            </div>
+                            <div class="glass-card p-5 text-center">
+                                <i class="fas fa-money-bill text-accent-cyan text-2xl mb-2"></i>
+                                <div class="text-2xl font-bold text-white">52.3亿</div>
+                                <div class="text-sm text-gray-400">货币资金</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 现金流分析 -->
+            <div id="fin-cashflow" class="tab-content">
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-water text-accent-cyan mr-3"></i>现金流趋势
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="cashflowChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-heartbeat text-accent-red mr-3"></i>现金流质量评估
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="glass-card-sm p-4 rounded-lg">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-gray-300">经营现金流/净利润</span>
+                                    <span class="text-accent-green font-bold">125%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill bg-gradient-to-r from-accent-green to-accent-cyan" style="width: 80%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">优秀：经营活动现金流充足，盈利质量高</p>
+                            </div>
+
+                            <div class="glass-card-sm p-4 rounded-lg">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-gray-300">自由现金流/营收</span>
+                                    <span class="text-accent-blue font-bold">18.5%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill bg-gradient-to-r from-accent-blue to-accent-purple" style="width: 65%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">良好：自由现金流创造能力较强</p>
+                            </div>
+
+                            <div class="glass-card-sm p-4 rounded-lg">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-gray-300">资本开支/折旧摊销</span>
+                                    <span class="text-accent-gold font-bold">1.8x</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill bg-gradient-to-r from-accent-gold to-accent-red" style="width: 55%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">中性：持续扩张投入，研发投入较大</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 财务比率 -->
+            <div id="fin-ratios" class="tab-content">
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-chart-radar text-accent-purple mr-3"></i>财务健康度雷达图
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="healthRadarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-sitemap text-accent-blue mr-3"></i>杜邦分析
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="glass-card-sm p-4 rounded-lg text-center">
+                                <div class="text-sm text-gray-400 mb-1">ROE (净资产收益率)</div>
+                                <div class="text-3xl font-bold text-accent-blue">19.32%</div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3">
+                                <div class="glass-card-sm p-3 rounded-lg text-center">
+                                    <div class="text-xs text-gray-400">净利率</div>
+                                    <div class="text-lg font-bold text-white">20.10%</div>
+                                </div>
+                                <div class="glass-card-sm p-3 rounded-lg text-center">
+                                    <div class="text-xs text-gray-400">资产周转率</div>
+                                    <div class="text-lg font-bold text-white">0.62x</div>
+                                </div>
+                                <div class="glass-card-sm p-3 rounded-lg text-center">
+                                    <div class="text-xs text-gray-400">权益乘数</div>
+                                    <div class="text-lg font-bold text-white">1.54x</div>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-400 text-center">ROE = 净利率 × 资产周转率 × 权益乘数</p>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-2">
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                            <div class="glass-card p-4 text-center hover-card">
+                                <div class="text-sm text-gray-400 mb-1">ROA</div>
+                                <div class="text-2xl font-bold text-accent-green">12.55%</div>
+                            </div>
+                            <div class="glass-card p-4 text-center hover-card">
+                                <div class="text-sm text-gray-400 mb-1">毛利率</div>
+                                <div class="text-2xl font-bold text-accent-blue">85.3%</div>
+                            </div>
+                            <div class="glass-card p-4 text-center hover-card">
+                                <div class="text-sm text-gray-400 mb-1">流动比率</div>
+                                <div class="text-2xl font-bold text-accent-purple">2.85x</div>
+                            </div>
+                            <div class="glass-card p-4 text-center hover-card">
+                                <div class="text-sm text-gray-400 mb-1">速动比率</div>
+                                <div class="text-2xl font-bold text-accent-cyan">2.52x</div>
+                            </div>
+                            <div class="glass-card p-4 text-center hover-card">
+                                <div class="text-sm text-gray-400 mb-1">利息保障</div>
+                                <div class="text-2xl font-bold text-accent-gold">18.5x</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 模块三：行业研究 ==================== -->
+    <section id="industry" class="module-section pt-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-black gradient-text mb-2">行业研究</h2>
+                <p class="text-gray-400">Industry Research</p>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-8">
+                <button class="tab-btn active" data-tab="ind-market">市场全景</button>
+                <button class="tab-btn" data-tab="ind-penetration">渗透率分析</button>
+                <button class="tab-btn" data-tab="ind-chain">产业链图谱</button>
+                <button class="tab-btn" data-tab="ind-policy">政策环境</button>
+            </div>
+
+            <!-- 市场全景 -->
+            <div id="ind-market" class="tab-content active">
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-chart-area text-accent-blue mr-3"></i>中国生长激素市场规模
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="marketSizeChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-chart-pie text-accent-purple mr-3"></i>市场份额分布 (2024)
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="marketShareChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-2">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="glass-card p-5 text-center hover-card">
+                                <div class="text-sm text-gray-400 mb-2">2024市场规模</div>
+                                <div class="text-3xl font-bold text-accent-blue">168亿</div>
+                                <div class="text-xs text-gray-500">同比+8.5%</div>
+                            </div>
+                            <div class="glass-card p-5 text-center hover-card">
+                                <div class="text-sm text-gray-400 mb-2">2030E市场规模</div>
+                                <div class="text-3xl font-bold text-accent-green">337.5亿</div>
+                                <div class="text-xs text-gray-500">CAGR 12.3%</div>
+                            </div>
+                            <div class="glass-card p-5 text-center hover-card">
+                                <div class="text-sm text-gray-400 mb-2">潜在患者数</div>
+                                <div class="text-3xl font-bold text-accent-purple">700万</div>
+                                <div class="text-xs text-gray-500">4-15岁儿童</div>
+                            </div>
+                            <div class="glass-card p-5 text-center hover-card">
+                                <div class="text-sm text-gray-400 mb-2">当前渗透率</div>
+                                <div class="text-3xl font-bold text-accent-gold">~5%</div>
+                                <div class="text-xs text-gray-500">vs美国35%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 渗透率分析 -->
+            <div id="ind-penetration" class="tab-content">
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-globe text-accent-cyan mr-3"></i>全球渗透率对比
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="penetrationChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-arrow-trend-up text-accent-green mr-3"></i>渗透率提升空间
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="glass-card-sm p-4 rounded-lg">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-white font-medium">中国 (当前)</span>
+                                    <span class="text-accent-red font-bold">5%</span>
+                                </div>
+                                <div class="progress-bar h-6 rounded-full">
+                                    <div class="progress-fill bg-gradient-to-r from-accent-red to-accent-gold rounded-full flex items-center justify-end pr-2" style="width: 14%">
+                                        <span class="text-xs text-white font-bold">5%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="glass-card-sm p-4 rounded-lg">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-white font-medium">中国 (目标)</span>
+                                    <span class="text-accent-blue font-bold">15%</span>
+                                </div>
+                                <div class="progress-bar h-6 rounded-full">
+                                    <div class="progress-fill bg-gradient-to-r from-accent-blue to-accent-cyan rounded-full flex items-center justify-end pr-2" style="width: 43%">
+                                        <span class="text-xs text-white font-bold">15%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="glass-card-sm p-4 rounded-lg">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-white font-medium">美国 (参考)</span>
+                                    <span class="text-accent-green font-bold">35%</span>
+                                </div>
+                                <div class="progress-bar h-6 rounded-full">
+                                    <div class="progress-fill bg-gradient-to-r from-accent-green to-accent-cyan rounded-full flex items-center justify-end pr-2" style="width: 100%">
+                                        <span class="text-xs text-white font-bold">35%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 p-4 bg-accent-blue/10 rounded-lg border border-accent-blue/30">
+                                <p class="text-sm text-gray-300">
+                                    <i class="fas fa-lightbulb text-accent-gold mr-2"></i>
+                                    若中国渗透率提升至10%，市场规模将翻倍至<strong class="text-accent-green">336亿元</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 产业链图谱 -->
+            <div id="ind-chain" class="tab-content">
+                <div class="glass-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-6 flex items-center">
+                        <i class="fas fa-project-diagram text-accent-purple mr-3"></i>生长激素产业链全景
+                    </h3>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <!-- 上游 -->
+                        <div class="glass-card-sm p-5 border-t-4 border-accent-blue">
+                            <h4 class="font-bold text-accent-blue mb-4">上游原料</h4>
+                            <ul class="space-y-3 text-sm text-gray-300">
+                                <li class="flex items-center justify-between p-2 glass-card-sm rounded">
+                                    <span>重组DNA技术</span>
+                                    <span class="text-xs text-accent-green">成熟</span>
+                                </li>
+                                <li class="flex items-center justify-between p-2 glass-card-sm rounded">
+                                    <span>大肠杆菌表达系统</span>
+                                    <span class="text-xs text-accent-green">成熟</span>
+                                </li>
+                                <li class="flex items-center justify-between p-2 glass-card-sm rounded">
+                                    <span>PEG化技术</span>
+                                    <span class="text-xs text-accent-gold">壁垒高</span>
+                                </li>
+                                <li class="flex items-center justify-between p-2 glass-card-sm rounded">
+                                    <span>缓释制剂技术</span>
+                                    <span class="text-xs text-accent-gold">壁垒高</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- 中游 -->
+                        <div class="glass-card-sm p-5 border-t-4 border-accent-purple">
+                            <h4 class="font-bold text-accent-purple mb-4">中游生产</h4>
+                            <ul class="space-y-3 text-sm text-gray-300">
+                                <li class="flex items-center justify-between p-2 glass-card-sm rounded">
+                                    <span>金赛药业(长春高新)</span>
+                                    <span class="text-xs text-accent-green font-bold">87%</span>
+                                </li>
+                                <li class="flex items-center justify-between p-2 glass-card-sm rounded">
+                                    <span>安科生物</span>
+                                    <span class="text-xs text-white">8%</span>
+                                </li>
+                                <li class="flex items-center justify-between p-2 glass-card-sm rounded">
+                                    <span>联合赛尔</span>
+                                    <span class="text-xs text-white">3%</span>
+                                </li>
+                                <li class="flex items-center justify-between p-2 glass-card-sm rounded">
+                                    <span>诺和诺德/其他</span>
+                                    <span class="text-xs text-white">2%</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- 下游 -->
+                        <div class="glass-card-sm p-5 border-t-4 border-accent-green">
+                            <h4 class="font-bold text-accent-green mb-4">下游终端</h4>
+                            <ul class="space-y-3 text-sm text-gray-300">
+                                <li class="flex items-center justify-between p-2 glass-card-sm rounded">
+                                    <span>公立医院</span>
+                                    <span class="text-xs text-white">60%</span>
+                                </li>
+                                <li class="flex items-center justify-between p-2 glass-card-sm rounded">
+                                    <span>儿童专科医院</span>
+                                    <span class="text-xs text-white">25%</span>
+                                </li>
+                                <li class="flex items-center justify-between p-2 glass-card-sm rounded">
+                                    <span>DTP药房</span>
+                                    <span class="text-xs text-white">10%</span>
+                                </li>
+                                <li class="flex items-center justify-between p-2 glass-card-sm rounded">
+                                    <span>其他渠道</span>
+                                    <span class="text-xs text-white">5%</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 政策环境 -->
+            <div id="ind-policy" class="tab-content">
+                <div class="glass-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-6 flex items-center">
+                        <i class="fas fa-scroll text-accent-gold mr-3"></i>政策时间线
+                    </h3>
+                    <div class="space-y-0">
+                        <div class="timeline-item">
+                            <div class="text-sm text-accent-blue font-bold mb-1">2024年</div>
+                            <h4 class="text-white font-medium">广东联盟集采落地</h4>
+                            <p class="text-sm text-gray-400">粉针价格降幅达52%，水针中标价格下降35%</p>
+                            <span class="inline-block mt-2 px-3 py-1 bg-accent-red/20 text-accent-red text-xs rounded-full">高影响</span>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="text-sm text-accent-blue font-bold mb-1">2023年</div>
+                            <h4 class="text-white font-medium">适应症监管趋严</h4>
+                            <p class="text-sm text-gray-400">强调适应症用药规范，特发性矮小适应症收窄</p>
+                            <span class="inline-block mt-2 px-3 py-1 bg-accent-gold/20 text-accent-gold text-xs rounded-full">中影响</span>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="text-sm text-accent-blue font-bold mb-1">2022年</div>
+                            <h4 class="text-white font-medium">儿童用药政策支持</h4>
+                            <p class="text-sm text-gray-400">《"十四五"国民健康规划》强调儿童健康优先</p>
+                            <span class="inline-block mt-2 px-3 py-1 bg-accent-green/20 text-accent-green text-xs rounded-full">正面</span>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="text-sm text-accent-blue font-bold mb-1">2021年</div>
+                            <h4 class="text-white font-medium">医保目录调整</h4>
+                            <p class="text-sm text-gray-400">生长激素纳入部分省份医保报销范围</p>
+                            <span class="inline-block mt-2 px-3 py-1 bg-accent-green/20 text-accent-green text-xs rounded-full">正面</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 模块四：竞争分析 ==================== -->
+    <section id="competition" class="module-section pt-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-black gradient-text mb-2">竞争分析</h2>
+                <p class="text-gray-400">Competitive Analysis</p>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-8">
+                <button class="tab-btn active" data-tab="comp-matrix">竞争矩阵</button>
+                <button class="tab-btn" data-tab="comp-compare">对标分析</button>
+                <button class="tab-btn" data-tab="comp-pipeline">竞品管线</button>
+            </div>
+
+            <!-- 竞争矩阵 -->
+            <div id="comp-matrix" class="tab-content active">
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-th text-accent-blue mr-3"></i>竞争力雷达图
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="competitorRadarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-trophy text-accent-gold mr-3"></i>市场份额演变
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="shareEvolutionChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-2 glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4">竞争格局概览</h3>
+                        <div class="overflow-x-auto">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>公司</th>
+                                        <th>市场份额</th>
+                                        <th>产品线</th>
+                                        <th>长效产品</th>
+                                        <th>竞争优势</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="font-medium text-accent-blue">金赛药业</td>
+                                        <td><span class="text-accent-green font-bold">87%</span></td>
+                                        <td>粉针/水针/长效</td>
+                                        <td><span class="text-accent-green">已上市</span></td>
+                                        <td>品牌、渠道、临床数据</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium text-white">安科生物</td>
+                                        <td>8%</td>
+                                        <td>粉针/水针</td>
+                                        <td><span class="text-accent-gold">临床III期</span></td>
+                                        <td>价格、区域市场</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium text-white">维昇药业</td>
+                                        <td><1%</td>
+                                        <td>长效</td>
+                                        <td><span class="text-accent-gold">临床III期</span></td>
+                                        <td>技术差异化</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium text-white">特宝生物</td>
+                                        <td><1%</td>
+                                        <td>长效</td>
+                                        <td><span class="text-accent-gold">NDA申请中</span></td>
+                                        <td>PEG化技术</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 对标分析 -->
+            <div id="comp-compare" class="tab-content">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- 金赛药业 -->
+                    <div class="glass-card p-6 border-t-4 border-accent-blue">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-accent-blue/20 rounded-xl flex items-center justify-center mr-4">
+                                <i class="fas fa-crown text-accent-gold text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-white">金赛药业 (长春高新)</h3>
+                                <span class="text-xs text-accent-blue">行业龙头</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400">2024营收</span>
+                                <span class="text-white font-bold">106.71亿</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400">市场份额</span>
+                                <span class="text-accent-green font-bold">87%</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400">产品线</span>
+                                <span class="text-white">粉针/水针/长效</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400">长效临床数据</span>
+                                <span class="text-accent-blue font-bold">15万例</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400">研发管线</span>
+                                <span class="text-white">24款临床阶段</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 安科生物 -->
+                    <div class="glass-card p-6 border-t-4 border-accent-purple">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-accent-purple/20 rounded-xl flex items-center justify-center mr-4">
+                                <i class="fas fa-medal text-accent-purple text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-white">安科生物</h3>
+                                <span class="text-xs text-accent-purple">主要竞争者</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400">2024营收(估)</span>
+                                <span class="text-white font-bold">~12亿</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400">市场份额</span>
+                                <span class="text-white font-bold">8%</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400">产品线</span>
+                                <span class="text-white">粉针/水针</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400">长效进展</span>
+                                <span class="text-accent-gold">临床III期</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400">竞争策略</span>
+                                <span class="text-white">价格+区域渗透</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 竞品管线 -->
+            <div id="comp-pipeline" class="tab-content">
+                <div class="glass-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-6 flex items-center">
+                        <i class="fas fa-flask text-accent-cyan mr-3"></i>长效生长激素竞品管线进度
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="glass-card-sm p-4 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center">
+                                    <span class="w-3 h-3 bg-accent-green rounded-full mr-3"></span>
+                                    <span class="font-medium text-white">金赛药业 - 金妥利</span>
+                                </div>
+                                <span class="px-3 py-1 bg-accent-green/20 text-accent-green text-xs rounded-full">已上市</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-gradient-to-r from-accent-green to-accent-cyan" style="width: 100%"></div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card-sm p-4 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center">
+                                    <span class="w-3 h-3 bg-accent-gold rounded-full mr-3"></span>
+                                    <span class="font-medium text-white">特宝生物 - Y型PEG化</span>
+                                </div>
+                                <span class="px-3 py-1 bg-accent-gold/20 text-accent-gold text-xs rounded-full">NDA审批中</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-gradient-to-r from-accent-gold to-accent-red" style="width: 90%"></div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card-sm p-4 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center">
+                                    <span class="w-3 h-3 bg-accent-blue rounded-full mr-3"></span>
+                                    <span class="font-medium text-white">维昇药业 - TransCon hGH</span>
+                                </div>
+                                <span class="px-3 py-1 bg-accent-blue/20 text-accent-blue text-xs rounded-full">临床III期</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-gradient-to-r from-accent-blue to-accent-purple" style="width: 75%"></div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card-sm p-4 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center">
+                                    <span class="w-3 h-3 bg-accent-purple rounded-full mr-3"></span>
+                                    <span class="font-medium text-white">安科生物 - 长效水针</span>
+                                </div>
+                                <span class="px-3 py-1 bg-accent-purple/20 text-accent-purple text-xs rounded-full">临床III期</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-gradient-to-r from-accent-purple to-accent-pink" style="width: 70%"></div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card-sm p-4 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center">
+                                    <span class="w-3 h-3 bg-accent-cyan rounded-full mr-3"></span>
+                                    <span class="font-medium text-white">诺和诺德 - Sogroya</span>
+                                </div>
+                                <span class="px-3 py-1 bg-accent-cyan/20 text-accent-cyan text-xs rounded-full">中国申报中</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-gradient-to-r from-accent-cyan to-accent-blue" style="width: 65%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 模块五：公司深研 ==================== -->
+    <section id="company" class="module-section pt-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-black gradient-text mb-2">公司深研</h2>
+                <p class="text-gray-400">Company Deep Dive</p>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-8">
+                <button class="tab-btn active" data-tab="co-management">管理层分析</button>
+                <button class="tab-btn" data-tab="co-pipeline">研发管线</button>
+                <button class="tab-btn" data-tab="co-subsidiary">子公司拆解</button>
+                <button class="tab-btn" data-tab="co-history">发展历程</button>
+            </div>
+
+            <!-- 管理层分析 -->
+            <div id="co-management" class="tab-content active">
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="glass-card p-6 hover-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-16 h-16 bg-gradient-to-br from-accent-blue to-accent-purple rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-user-tie text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white">金磊</h4>
+                                <span class="text-sm text-accent-blue">金赛药业总经理</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-400">生长激素领域顶级专家，主导产品研发与市场战略，是金赛药业核心灵魂人物。</p>
+                        <div class="mt-4 flex items-center text-xs text-gray-500">
+                            <i class="fas fa-briefcase mr-2"></i>
+                            <span>任职超过20年</span>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6 hover-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-16 h-16 bg-gradient-to-br from-accent-green to-accent-cyan rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-user-tie text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white">周伟昌</h4>
+                                <span class="text-sm text-accent-green">长春高新董事长</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-400">负责集团整体战略规划与资本运作，推动公司多元化与国际化战略。</p>
+                        <div class="mt-4 flex items-center text-xs text-gray-500">
+                            <i class="fas fa-briefcase mr-2"></i>
+                            <span>医药行业资深管理者</span>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6 hover-card">
+                        <div class="flex items-center mb-4">
+                            <div class="w-16 h-16 bg-gradient-to-br from-accent-gold to-accent-red rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-user-cog text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white">研发团队</h4>
+                                <span class="text-sm text-accent-gold">核心研发力量</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-400">拥有超过500人的研发团队，其中博士学历占比15%，硕士学历占比45%。</p>
+                        <div class="mt-4 flex items-center text-xs text-gray-500">
+                            <i class="fas fa-flask mr-2"></i>
+                            <span>研发投入占比19.97%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 glass-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                        <i class="fas fa-chart-pie text-accent-purple mr-3"></i>股权结构
+                    </h3>
+                    <div class="grid md:grid-cols-4 gap-4">
+                        <div class="glass-card-sm p-4 text-center rounded-lg">
+                            <div class="text-2xl font-bold text-accent-blue">18.26%</div>
+                            <div class="text-sm text-gray-400">长春高新区管委会</div>
+                        </div>
+                        <div class="glass-card-sm p-4 text-center rounded-lg">
+                            <div class="text-2xl font-bold text-accent-purple">8.52%</div>
+                            <div class="text-sm text-gray-400">香港中央结算</div>
+                        </div>
+                        <div class="glass-card-sm p-4 text-center rounded-lg">
+                            <div class="text-2xl font-bold text-accent-green">5.21%</div>
+                            <div class="text-sm text-gray-400">基金持股</div>
+                        </div>
+                        <div class="glass-card-sm p-4 text-center rounded-lg">
+                            <div class="text-2xl font-bold text-gray-400">68.01%</div>
+                            <div class="text-sm text-gray-400">其他股东</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 研发管线 -->
+            <div id="co-pipeline" class="tab-content">
+                <div class="glass-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                        <i class="fas fa-dna text-accent-cyan mr-3"></i>24款临床阶段产品管线
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>产品名称</th>
+                                    <th>适应症</th>
+                                    <th>阶段</th>
+                                    <th>预计上市</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-medium text-accent-blue">金妥利(长效生长激素)</td>
+                                    <td>儿童矮小症</td>
+                                    <td><span class="text-accent-green">已上市</span></td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-medium text-white">GC1118</td>
+                                    <td>成人GHD</td>
+                                    <td><span class="text-accent-gold">临床III期</span></td>
+                                    <td>2025E</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-medium text-white">金纳单抗</td>
+                                    <td>自身免疫疾病</td>
+                                    <td><span class="text-accent-blue">临床II期</span></td>
+                                    <td>2026E</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-medium text-white">促卵泡激素</td>
+                                    <td>女性不孕</td>
+                                    <td><span class="text-accent-gold">临床III期</span></td>
+                                    <td>2025E</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-medium text-white">其他20款产品</td>
+                                    <td>多领域</td>
+                                    <td><span class="text-accent-purple">临床I-III期</span></td>
+                                    <td>2025-2028E</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 子公司拆解 -->
+            <div id="co-subsidiary" class="tab-content">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="glass-card p-6 border-l-4 border-accent-blue">
+                        <h3 class="text-xl font-bold text-white mb-4">金赛药业</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">持股比例</span>
+                                <span class="text-accent-blue font-bold">99.5%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">2024营收</span>
+                                <span class="text-white font-bold">106.71亿</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">营收占比</span>
+                                <span class="text-accent-green font-bold">79%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">核心产品</span>
+                                <span class="text-white">生长激素系列</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6 border-l-4 border-accent-purple">
+                        <h3 class="text-xl font-bold text-white mb-4">百克生物</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">持股比例</span>
+                                <span class="text-accent-purple font-bold">46.15%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">2024营收</span>
+                                <span class="text-white font-bold">~20亿</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">营收占比</span>
+                                <span class="text-white font-bold">15%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">核心产品</span>
+                                <span class="text-white">疫苗产品</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 发展历程 -->
+            <div id="co-history" class="tab-content">
+                <div class="glass-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-6 flex items-center">
+                        <i class="fas fa-history text-accent-gold mr-3"></i>企业发展里程碑
+                    </h3>
+                    <div class="space-y-0">
+                        <div class="timeline-item">
+                            <div class="text-sm text-accent-blue font-bold">1993年</div>
+                            <h4 class="text-white font-medium">公司成立</h4>
+                            <p class="text-sm text-gray-400">长春高新技术产业集团股份有限公司成立</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="text-sm text-accent-blue font-bold">1998年</div>
+                            <h4 class="text-white font-medium">金赛药业成立</h4>
+                            <p class="text-sm text-gray-400">进军生长激素领域，开启生物医药征程</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="text-sm text-accent-blue font-bold">2005年</div>
+                            <h4 class="text-white font-medium">水针上市</h4>
+                            <p class="text-sm text-gray-400">中国首个重组人生长激素水针剂获批上市</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="text-sm text-accent-blue font-bold">2014年</div>
+                            <h4 class="text-white font-medium">长效上市</h4>
+                            <p class="text-sm text-gray-400">全球首个长效生长激素"金妥利"获批</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="text-sm text-accent-blue font-bold">2024年</div>
+                            <h4 class="text-white font-medium">海外突破</h4>
+                            <p class="text-sm text-gray-400">海外收入增长454%，国际化战略加速</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 模块六：投资估值 ==================== -->
+    <section id="valuation" class="module-section pt-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-black gradient-text mb-2">投资估值</h2>
+                <p class="text-gray-400">Investment Valuation</p>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-8">
+                <button class="tab-btn active" data-tab="val-relative">相对估值</button>
+                <button class="tab-btn" data-tab="val-dcf">DCF模型</button>
+                <button class="tab-btn" data-tab="val-recommendation">投资建议</button>
+            </div>
+
+            <!-- 相对估值 -->
+            <div id="val-relative" class="tab-content active">
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-chart-line text-accent-blue mr-3"></i>历史PE Band
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="peBandChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-balance-scale text-accent-purple mr-3"></i>可比公司估值
+                        </h3>
+                        <div class="overflow-x-auto">
+                            <table class="data-table text-sm">
+                                <thead>
+                                    <tr>
+                                        <th>公司</th>
+                                        <th>PE(TTM)</th>
+                                        <th>PB</th>
+                                        <th>PS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-accent-blue font-medium">长春高新</td>
+                                        <td>25x</td>
+                                        <td>3.2x</td>
+                                        <td>5.1x</td>
+                                    </tr>
+                                    <tr>
+                                        <td>安科生物</td>
+                                        <td>35x</td>
+                                        <td>4.5x</td>
+                                        <td>6.2x</td>
+                                    </tr>
+                                    <tr>
+                                        <td>智飞生物</td>
+                                        <td>15x</td>
+                                        <td>2.8x</td>
+                                        <td>2.1x</td>
+                                    </tr>
+                                    <tr>
+                                        <td>恒瑞医药</td>
+                                        <td>45x</td>
+                                        <td>6.5x</td>
+                                        <td>8.5x</td>
+                                    </tr>
+                                    <tr class="font-bold">
+                                        <td class="text-accent-gold">行业平均</td>
+                                        <td>30x</td>
+                                        <td>4.3x</td>
+                                        <td>5.5x</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-4">
+                            <i class="fas fa-info-circle text-accent-blue mr-2"></i>
+                            当前PE低于行业平均，存在估值修复空间
+                        </p>
+                    </div>
+
+                    <div class="lg:col-span-2">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="glass-card p-5 text-center">
+                                <div class="text-sm text-gray-400 mb-2">当前PE</div>
+                                <div class="text-3xl font-bold text-accent-blue">25x</div>
+                                <div class="text-xs text-gray-500">TTM</div>
+                            </div>
+                            <div class="glass-card p-5 text-center">
+                                <div class="text-sm text-gray-400 mb-2">历史PE中位</div>
+                                <div class="text-3xl font-bold text-accent-purple">35x</div>
+                                <div class="text-xs text-gray-500">5年</div>
+                            </div>
+                            <div class="glass-card p-5 text-center">
+                                <div class="text-sm text-gray-400 mb-2">目标PE</div>
+                                <div class="text-3xl font-bold text-accent-green">30x</div>
+                                <div class="text-xs text-gray-500">保守</div>
+                            </div>
+                            <div class="glass-card p-5 text-center">
+                                <div class="text-sm text-gray-400 mb-2">上行空间</div>
+                                <div class="text-3xl font-bold text-accent-gold">+20%</div>
+                                <div class="text-xs text-gray-500">潜在</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DCF模型 -->
+            <div id="val-dcf" class="tab-content">
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-calculator text-accent-cyan mr-3"></i>DCF关键假设
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="glass-card-sm p-4 rounded-lg">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-300">WACC</span>
+                                    <span class="text-accent-blue font-bold">9.5%</span>
+                                </div>
+                            </div>
+                            <div class="glass-card-sm p-4 rounded-lg">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-300">永续增长率</span>
+                                    <span class="text-accent-green font-bold">3.0%</span>
+                                </div>
+                            </div>
+                            <div class="glass-card-sm p-4 rounded-lg">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-300">预测期</span>
+                                    <span class="text-accent-purple font-bold">10年</span>
+                                </div>
+                            </div>
+                            <div class="glass-card-sm p-4 rounded-lg">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-300">营收CAGR(1-5年)</span>
+                                    <span class="text-accent-gold font-bold">8.0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                            <i class="fas fa-table text-accent-purple mr-3"></i>敏感性分析
+                        </h3>
+                        <div class="overflow-x-auto">
+                            <table class="data-table text-sm">
+                                <thead>
+                                    <tr>
+                                        <th>WACC / g</th>
+                                        <th>2.0%</th>
+                                        <th>3.0%</th>
+                                        <th>4.0%</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="font-medium text-white">8.5%</td>
+                                        <td>¥185</td>
+                                        <td class="text-accent-green">¥210</td>
+                                        <td>¥245</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium text-white">9.5%</td>
+                                        <td>¥165</td>
+                                        <td class="text-accent-blue font-bold">¥185</td>
+                                        <td>¥210</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-medium text-white">10.5%</td>
+                                        <td>¥148</td>
+                                        <td>¥165</td>
+                                        <td>¥185</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-4">
+                            基准情景下目标价：<span class="text-accent-blue font-bold">¥185</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 投资建议 -->
+            <div id="val-recommendation" class="tab-content">
+                <div class="glass-card p-8 gradient-border">
+                    <div class="text-center mb-8">
+                        <h3 class="text-2xl font-bold text-white mb-2">投资评级</h3>
+                        <div class="inline-flex items-center px-6 py-3 bg-accent-gold/20 rounded-full">
+                            <i class="fas fa-star text-accent-gold mr-2"></i>
+                            <span class="text-2xl font-black text-accent-gold">增持</span>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-6 mb-8">
+                        <div class="glass-card-sm p-5 text-center rounded-xl">
+                            <div class="text-sm text-gray-400 mb-2">目标价</div>
+                            <div class="text-3xl font-bold text-accent-green">¥185-210</div>
+                            <div class="text-xs text-gray-500">12个月</div>
+                        </div>
+                        <div class="glass-card-sm p-5 text-center rounded-xl">
+                            <div class="text-sm text-gray-400 mb-2">当前价</div>
+                            <div class="text-3xl font-bold text-white">¥168.50</div>
+                            <div class="text-xs text-gray-500">最新收盘</div>
+                        </div>
+                        <div class="glass-card-sm p-5 text-center rounded-xl">
+                            <div class="text-sm text-gray-400 mb-2">上行空间</div>
+                            <div class="text-3xl font-bold text-accent-blue">+10-25%</div>
+                            <div class="text-xs text-gray-500">潜在收益</div>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="glass-card-sm p-5 rounded-xl border-l-4 border-accent-green">
+                            <h4 class="font-bold text-accent-green mb-3"><i class="fas fa-thumbs-up mr-2"></i>看多理由</h4>
+                            <ul class="space-y-2 text-sm text-gray-300">
+                                <li><i class="fas fa-check text-accent-green mr-2"></i>渗透率提升空间巨大(5%→15%)</li>
+                                <li><i class="fas fa-check text-accent-green mr-2"></i>海外市场快速增长(+454%)</li>
+                                <li><i class="fas fa-check text-accent-green mr-2"></i>创新药管线进入收获期</li>
+                                <li><i class="fas fa-check text-accent-green mr-2"></i>估值处于历史低位</li>
+                            </ul>
+                        </div>
+
+                        <div class="glass-card-sm p-5 rounded-xl border-l-4 border-accent-red">
+                            <h4 class="font-bold text-accent-red mb-3"><i class="fas fa-exclamation-triangle mr-2"></i>主要风险</h4>
+                            <ul class="space-y-2 text-sm text-gray-300">
+                                <li><i class="fas fa-times text-accent-red mr-2"></i>全国集采价格压力</li>
+                                <li><i class="fas fa-times text-accent-red mr-2"></i>长效竞品获批冲击</li>
+                                <li><i class="fas fa-times text-accent-red mr-2"></i>创新药商业化不及预期</li>
+                                <li><i class="fas fa-times text-accent-red mr-2"></i>业绩持续下滑风险</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 模块七：附录 ==================== -->
+    <section id="appendix" class="module-section pt-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-black gradient-text mb-2">附录资料</h2>
+                <p class="text-gray-400">Appendix</p>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-8">
+                <button class="tab-btn active" data-tab="app-data">数据来源</button>
+                <button class="tab-btn" data-tab="app-glossary">术语表</button>
+                <button class="tab-btn" data-tab="app-disclaimer">免责声明</button>
+            </div>
+
+            <!-- 数据来源 -->
+            <div id="app-data" class="tab-content active">
+                <div class="glass-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                        <i class="fas fa-database text-accent-blue mr-3"></i>数据来源
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="glass-card-sm p-4 rounded-lg">
+                            <h4 class="font-medium text-white mb-2"><i class="fas fa-file-alt text-accent-cyan mr-2"></i>公司公告</h4>
+                            <ul class="text-sm text-gray-400 space-y-1">
+                                <li>· 长春高新2024年年度报告</li>
+                                <li>· 长春高新2025年半年度报告</li>
+                                <li>· 金赛药业经营数据公告</li>
+                            </ul>
+                        </div>
+                        <div class="glass-card-sm p-4 rounded-lg">
+                            <h4 class="font-medium text-white mb-2"><i class="fas fa-chart-bar text-accent-purple mr-2"></i>行业报告</h4>
+                            <ul class="text-sm text-gray-400 space-y-1">
+                                <li>· 弗若斯特沙利文行业报告</li>
+                                <li>· 中国生长激素市场研究</li>
+                                <li>· 券商研究报告汇总</li>
+                            </ul>
+                        </div>
+                        <div class="glass-card-sm p-4 rounded-lg">
+                            <h4 class="font-medium text-white mb-2"><i class="fas fa-newspaper text-accent-green mr-2"></i>财经媒体</h4>
+                            <ul class="text-sm text-gray-400 space-y-1">
+                                <li>· 东方财富网</li>
+                                <li>· 新浪财经</li>
+                                <li>· 同花顺iFinD</li>
+                            </ul>
+                        </div>
+                        <div class="glass-card-sm p-4 rounded-lg">
+                            <h4 class="font-medium text-white mb-2"><i class="fas fa-university text-accent-gold mr-2"></i>监管信息</h4>
+                            <ul class="text-sm text-gray-400 space-y-1">
+                                <li>· 国家药监局公告</li>
+                                <li>· 医保局政策文件</li>
+                                <li>· 深交所公告系统</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 术语表 -->
+            <div id="app-glossary" class="tab-content">
+                <div class="glass-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                        <i class="fas fa-book text-accent-purple mr-3"></i>专业术语表
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="glass-card-sm p-4 rounded-lg">
+                            <h4 class="font-medium text-accent-blue">GHD</h4>
+                            <p class="text-sm text-gray-400">Growth Hormone Deficiency，生长激素缺乏症</p>
+                        </div>
+                        <div class="glass-card-sm p-4 rounded-lg">
+                            <h4 class="font-medium text-accent-green">ISS</h4>
+                            <p class="text-sm text-gray-400">Idiopathic Short Stature，特发性矮小</p>
+                        </div>
+                        <div class="glass-card-sm p-4 rounded-lg">
+                            <h4 class="font-medium text-accent-purple">PEG化</h4>
+                            <p class="text-sm text-gray-400">聚乙二醇修饰技术，用于延长药物半衰期</p>
+                        </div>
+                        <div class="glass-card-sm p-4 rounded-lg">
+                            <h4 class="font-medium text-accent-gold">DCF</h4>
+                            <p class="text-sm text-gray-400">Discounted Cash Flow，现金流折现估值法</p>
+                        </div>
+                        <div class="glass-card-sm p-4 rounded-lg">
+                            <h4 class="font-medium text-accent-cyan">WACC</h4>
+                            <p class="text-sm text-gray-400">Weighted Average Cost of Capital，加权平均资本成本</p>
+                        </div>
+                        <div class="glass-card-sm p-4 rounded-lg">
+                            <h4 class="font-medium text-accent-red">集采</h4>
+                            <p class="text-sm text-gray-400">国家组织药品集中带量采购政策</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 免责声明 -->
+            <div id="app-disclaimer" class="tab-content">
+                <div class="glass-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                        <i class="fas fa-exclamation-circle text-accent-gold mr-3"></i>免责声明
+                    </h3>
+                    <div class="prose prose-invert max-w-none">
+                        <p class="text-gray-300 leading-relaxed mb-4">
+                            本分析报告仅供学习研究与参考之用，不构成任何投资建议。报告中的信息来源于公开资料，
+                            我们力求信息准确可靠，但不保证其完整性和准确性。
+                        </p>
+                        <p class="text-gray-300 leading-relaxed mb-4">
+                            <strong class="text-accent-gold">投资有风险，入市需谨慎。</strong>
+                            股票投资可能导致本金损失，过往业绩不代表未来表现。
+                            投资者应根据自身风险承受能力和投资目标，审慎做出投资决策。
+                        </p>
+                        <p class="text-gray-400 text-sm">
+                            数据截止日期：2025年8月 | 报告生成日期：2026年1月
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="glass-card-sm mt-12 py-8 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-3 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-blue to-accent-purple flex items-center justify-center">
+                        <i class="fas fa-chart-line text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold gradient-text">长春高新超级分析平台</span>
+                </div>
+                <p class="text-sm text-gray-500 mb-2">
+                    <i class="fas fa-code mr-2"></i>
+                    使用 HTML5 + Tailwind CSS + Chart.js 构建
+                </p>
+                <p class="text-xs text-gray-600">
+                    制作于 2026年1月 | 仅供学习研究使用
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Particles.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+    <script>
+        // ==================== 粒子背景初始化 ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof particlesJS !== 'undefined') {
+                particlesJS('particles-js', {
+                    particles: {
+                        number: { value: 80, density: { enable: true, value_area: 800 } },
+                        color: { value: ['#3b82f6', '#06b6d4', '#8b5cf6'] },
+                        shape: { type: 'circle' },
+                        opacity: { value: 0.5, random: true },
+                        size: { value: 3, random: true },
+                        line_linked: {
+                            enable: true,
+                            distance: 150,
+                            color: '#3b82f6',
+                            opacity: 0.2,
+                            width: 1
+                        },
+                        move: {
+                            enable: true,
+                            speed: 1,
+                            direction: 'none',
+                            random: true,
+                            straight: false,
+                            out_mode: 'out'
+                        }
+                    },
+                    interactivity: {
+                        detect_on: 'canvas',
+                        events: {
+                            onhover: { enable: true, mode: 'grab' },
+                            onclick: { enable: true, mode: 'push' }
+                        },
+                        modes: {
+                            grab: { distance: 140, line_linked: { opacity: 0.5 } },
+                            push: { particles_nb: 4 }
+                        }
+                    },
+                    retina_detect: true
+                });
+            }
+        });
+
+        // ==================== 数字动画 ====================
+        function animateNumbers() {
+            const numbers = document.querySelectorAll('.stat-number[data-value]');
+            numbers.forEach(el => {
+                const target = parseFloat(el.dataset.value);
+                const suffix = el.dataset.suffix || '';
+                const duration = 2000;
+                const start = 0;
+                const startTime = performance.now();
+
+                function update(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const easeOut = 1 - Math.pow(1 - progress, 3);
+                    const current = start + (target - start) * easeOut;
+
+                    if (target % 1 === 0) {
+                        el.textContent = Math.round(current) + suffix;
+                    } else {
+                        el.textContent = current.toFixed(2) + suffix;
+                    }
+
+                    if (progress < 1) {
+                        requestAnimationFrame(update);
+                    }
+                }
+                requestAnimationFrame(update);
+            });
+        }
+
+        // ==================== 模块切换 ====================
+        const navItems = document.querySelectorAll('.nav-item');
+        const modules = document.querySelectorAll('.module-section');
+
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const targetModule = this.dataset.module;
+
+                // 更新导航状态
+                navItems.forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+
+                // 切换模块
+                modules.forEach(mod => {
+                    mod.classList.remove('active');
+                    if (mod.id === targetModule) {
+                        mod.classList.add('active');
+                        // 滚动到顶部
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
+
+                // 关闭移动端菜单
+                document.getElementById('mobileMenu').classList.remove('open');
+            });
+        });
+
+        // ==================== 标签切换 ====================
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabId = this.dataset.tab;
+                const parent = this.closest('.module-section') || this.closest('section');
+
+                // 更新标签按钮状态
+                parent.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // 切换标签内容
+                parent.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === tabId) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // ==================== 移动端菜单 ====================
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('mobileMenu').classList.toggle('open');
+        });
+
+        // ==================== Chart.js 图表 ====================
+        const chartColors = {
+            blue: '#3b82f6',
+            cyan: '#06b6d4',
+            purple: '#8b5cf6',
+            green: '#10b981',
+            red: '#ef4444',
+            gold: '#f59e0b',
+            pink: '#ec4899',
+            gray: '#6b7280'
+        };
+
+        // 全局Chart.js配置
+        Chart.defaults.color = '#9ca3af';
+        Chart.defaults.font.family = "'Noto Sans SC', sans-serif";
+
+        // 波特五力雷达图
+        const porterCtx = document.getElementById('porterChart');
+        if (porterCtx) {
+            new Chart(porterCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['新进入者威胁', '供应商议价', '买方议价', '替代品威胁', '行业竞争'],
+                    datasets: [{
+                        label: '威胁/能力程度',
+                        data: [55, 25, 80, 20, 70],
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: chartColors.blue,
+                        borderWidth: 2,
+                        pointBackgroundColor: chartColors.blue,
+                        pointBorderColor: '#fff',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { stepSize: 20, display: false },
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            angleLines: { color: 'rgba(255,255,255,0.1)' },
+                            pointLabels: { color: '#f9fafb', font: { size: 11 } }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        // 营收与净利润趋势
+        const revenueCtx = document.getElementById('revenueChart');
+        if (revenueCtx) {
+            new Chart(revenueCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['2020', '2021', '2022', '2023', '2024'],
+                    datasets: [
+                        {
+                            label: '营业收入',
+                            data: [85.77, 107.47, 126.27, 145.66, 134.66],
+                            backgroundColor: chartColors.blue,
+                            borderRadius: 6
+                        },
+                        {
+                            label: '净利润',
+                            data: [30.47, 39.23, 42.15, 47.76, 27.08],
+                            backgroundColor: chartColors.green,
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { position: 'top', labels: { usePointStyle: true } }
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            title: { display: true, text: '亿元' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 收入构成
+        const revenueBreakdownCtx = document.getElementById('revenueBreakdownChart');
+        if (revenueBreakdownCtx) {
+            new Chart(revenueBreakdownCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['生长激素', '疫苗业务', '其他业务'],
+                    datasets: [{
+                        data: [79, 15, 6],
+                        backgroundColor: [chartColors.blue, chartColors.purple, chartColors.gray],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    cutout: '60%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true } }
+                    }
+                }
+            });
+        }
+
+        // 资产结构
+        const assetCtx = document.getElementById('assetChart');
+        if (assetCtx) {
+            new Chart(assetCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['流动资产', '固定资产', '无形资产', '其他'],
+                    datasets: [{
+                        label: '资产构成',
+                        data: [125.3, 45.2, 28.6, 16.7],
+                        backgroundColor: [chartColors.blue, chartColors.purple, chartColors.cyan, chartColors.gray],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    indexAxis: 'y',
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' } },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // 资产负债率趋势
+        const leverageCtx = document.getElementById('leverageChart');
+        if (leverageCtx) {
+            new Chart(leverageCtx, {
+                type: 'line',
+                data: {
+                    labels: ['2020', '2021', '2022', '2023', '2024'],
+                    datasets: [{
+                        label: '资产负债率',
+                        data: [32.5, 33.8, 34.2, 35.8, 35.0],
+                        borderColor: chartColors.purple,
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            min: 25, max: 45
+                        }
+                    }
+                }
+            });
+        }
+
+        // 现金流趋势
+        const cashflowCtx = document.getElementById('cashflowChart');
+        if (cashflowCtx) {
+            new Chart(cashflowCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['2020', '2021', '2022', '2023', '2024'],
+                    datasets: [
+                        {
+                            label: '经营现金流',
+                            data: [35.2, 42.8, 48.5, 52.3, 33.8],
+                            backgroundColor: chartColors.green,
+                            borderRadius: 6
+                        },
+                        {
+                            label: '投资现金流',
+                            data: [-15.3, -18.6, -22.1, -25.8, -28.5],
+                            backgroundColor: chartColors.red,
+                            borderRadius: 6
+                        },
+                        {
+                            label: '筹资现金流',
+                            data: [-8.2, -12.5, -15.8, -18.2, -10.5],
+                            backgroundColor: chartColors.purple,
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { position: 'top', labels: { usePointStyle: true } }
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' } }
+                    }
+                }
+            });
+        }
+
+        // 财务健康雷达图
+        const healthRadarCtx = document.getElementById('healthRadarChart');
+        if (healthRadarCtx) {
+            new Chart(healthRadarCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['盈利能力', '偿债能力', '运营效率', '成长性', '现金流'],
+                    datasets: [{
+                        label: '财务健康度',
+                        data: [85, 75, 70, 60, 80],
+                        backgroundColor: 'rgba(6, 182, 212, 0.2)',
+                        borderColor: chartColors.cyan,
+                        borderWidth: 2,
+                        pointBackgroundColor: chartColors.cyan
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { display: false },
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            angleLines: { color: 'rgba(255,255,255,0.1)' },
+                            pointLabels: { color: '#f9fafb', font: { size: 11 } }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        // 市场规模
+        const marketSizeCtx = document.getElementById('marketSizeChart');
+        if (marketSizeCtx) {
+            new Chart(marketSizeCtx, {
+                type: 'line',
+                data: {
+                    labels: ['2020', '2021', '2022', '2023', '2024', '2025E', '2026E', '2027E', '2028E', '2029E', '2030E'],
+                    datasets: [{
+                        label: '市场规模(亿元)',
+                        data: [98, 115, 132, 155, 168, 188, 212, 240, 272, 302, 337.5],
+                        borderColor: chartColors.blue,
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            title: { display: true, text: '亿元' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 市场份额
+        const marketShareCtx = document.getElementById('marketShareChart');
+        if (marketShareCtx) {
+            new Chart(marketShareCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['金赛药业', '安科生物', '联合赛尔', '诺和诺德', '其他'],
+                    datasets: [{
+                        data: [87, 8, 3, 1, 1],
+                        backgroundColor: [chartColors.blue, chartColors.green, chartColors.gold, chartColors.purple, chartColors.gray],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    cutout: '60%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true } }
+                    }
+                }
+            });
+        }
+
+        // 渗透率对比
+        const penetrationCtx = document.getElementById('penetrationChart');
+        if (penetrationCtx) {
+            new Chart(penetrationCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['中国', '日本', '韩国', '欧洲', '美国'],
+                    datasets: [{
+                        label: '渗透率',
+                        data: [5, 12, 15, 25, 35],
+                        backgroundColor: [chartColors.red, chartColors.gold, chartColors.purple, chartColors.cyan, chartColors.green],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            title: { display: true, text: '%' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 竞争力雷达图
+        const competitorRadarCtx = document.getElementById('competitorRadarChart');
+        if (competitorRadarCtx) {
+            new Chart(competitorRadarCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['市场份额', '产品线', '研发能力', '渠道网络', '品牌影响'],
+                    datasets: [
+                        {
+                            label: '金赛药业',
+                            data: [95, 90, 85, 90, 95],
+                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                            borderColor: chartColors.blue,
+                            borderWidth: 2
+                        },
+                        {
+                            label: '安科生物',
+                            data: [35, 50, 60, 55, 45],
+                            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                            borderColor: chartColors.green,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { display: false },
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            angleLines: { color: 'rgba(255,255,255,0.1)' },
+                            pointLabels: { color: '#f9fafb', font: { size: 10 } }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true } }
+                    }
+                }
+            });
+        }
+
+        // 市场份额演变
+        const shareEvolutionCtx = document.getElementById('shareEvolutionChart');
+        if (shareEvolutionCtx) {
+            new Chart(shareEvolutionCtx, {
+                type: 'line',
+                data: {
+                    labels: ['2019', '2020', '2021', '2022', '2023', '2024'],
+                    datasets: [
+                        {
+                            label: '金赛药业',
+                            data: [82, 84, 85, 86, 87, 87],
+                            borderColor: chartColors.blue,
+                            tension: 0.4
+                        },
+                        {
+                            label: '安科生物',
+                            data: [12, 11, 10, 9, 8, 8],
+                            borderColor: chartColors.green,
+                            tension: 0.4
+                        },
+                        {
+                            label: '其他',
+                            data: [6, 5, 5, 5, 5, 5],
+                            borderColor: chartColors.gray,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true } }
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            title: { display: true, text: '%' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // PE Band
+        const peBandCtx = document.getElementById('peBandChart');
+        if (peBandCtx) {
+            new Chart(peBandCtx, {
+                type: 'line',
+                data: {
+                    labels: ['2020', '2021', '2022', '2023', '2024', '2025E'],
+                    datasets: [
+                        {
+                            label: '股价',
+                            data: [350, 420, 280, 180, 150, 168],
+                            borderColor: chartColors.blue,
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: false,
+                            tension: 0.4,
+                            borderWidth: 3
+                        },
+                        {
+                            label: '40x PE',
+                            data: [400, 450, 380, 320, 280, 260],
+                            borderColor: 'rgba(239, 68, 68, 0.5)',
+                            borderDash: [5, 5],
+                            borderWidth: 1,
+                            pointRadius: 0
+                        },
+                        {
+                            label: '25x PE',
+                            data: [250, 280, 240, 200, 175, 160],
+                            borderColor: 'rgba(34, 197, 94, 0.5)',
+                            borderDash: [5, 5],
+                            borderWidth: 1,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true } }
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            title: { display: true, text: '股价' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 页面加载完成后启动数字动画
+        window.addEventListener('load', function() {
+            setTimeout(animateNumbers, 500);
+        });
+    </script>
+</body>
+</html>
